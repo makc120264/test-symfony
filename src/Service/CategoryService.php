@@ -54,7 +54,6 @@ class CategoryService
 
     /**
      * @return array
-     * @throws NonUniqueResultException
      */
     public function checkCategories(): array
     {
