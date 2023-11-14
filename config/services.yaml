@@ -6,6 +6,10 @@
 parameters:
 
 services:
+    App\Event\ProductEventSubscriber:
+        tags:
+            - { name: kernel.event_subscriber, event: product.created }
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

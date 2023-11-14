@@ -3,10 +3,14 @@
 namespace App\Service;
 
 use App\Entity\Product;
+use App\Event\ProductCreatedEvent;
+use App\Event\ProductEventSubscriber;
+use App\Event\ProductUpdatedEvent;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -28,23 +32,30 @@ class ProductService
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @param ProductRepository $productRepository
      * @param CategoryRepository $categoryRepository
      * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ProductRepository $productRepository,
         CategoryRepository $categoryRepository,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -63,6 +74,7 @@ class ProductService
                 $message = $this->setProductData($product, $productItem);
                 if (empty($message)) {
                     $this->addNewProduct($product);
+                    $this->addProductCreatedEvent($product);
                 } else {
                     $messages[] = $message;
                 }
@@ -71,6 +83,7 @@ class ProductService
                 $message = $this->setProductData($product, $productItem);
                 if (empty($message)) {
                     $this->updateProduct();
+                    $this->addProductUpdatedEvent($product);
                 } else {
                     $messages[] = $message;
                 }
@@ -78,6 +91,28 @@ class ProductService
         }
 
         return $messages;
+    }
+
+    /**
+     * @param $product
+     * @return void
+     */
+    private function addProductUpdatedEvent($product): void
+    {
+        $event = new ProductUpdatedEvent($product);
+        $this->eventDispatcher->addSubscriber(new ProductEventSubscriber());
+        $this->eventDispatcher->dispatch($event, ProductUpdatedEvent::NAME);
+    }
+
+    /**
+     * @param $product
+     * @return void
+     */
+    private function addProductCreatedEvent($product): void
+    {
+        $event = new ProductCreatedEvent($product);
+        $this->eventDispatcher->addSubscriber(new ProductEventSubscriber());
+        $this->eventDispatcher->dispatch($event, ProductCreatedEvent::NAME);
     }
 
     /**
