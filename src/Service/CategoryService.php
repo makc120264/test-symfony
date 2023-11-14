@@ -6,7 +6,6 @@ use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CategoryService
@@ -23,10 +22,6 @@ class CategoryService
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
-    /**
-     * @var Assert\Length
-     */
-    private Assert\Length $constraintsLengthRule;
 
     /**
      * @param CategoryRepository $categoryRepository
@@ -41,14 +36,6 @@ class CategoryService
         $this->categoryRepository = $categoryRepository;
         $this->entityManager = $entityManager;
         $this->validator = $validator;
-        $this->constraintsLengthRule = new Assert\Length(
-            [
-                'min' => 3,
-                'max' => 50,
-                'minMessage' => 'Category title must be at least {{ limit }} characters long',
-                'maxMessage' => 'Category title cannot be longer than {{ limit }} characters long',
-            ]
-        );
     }
 
     /**
@@ -71,7 +58,7 @@ class CategoryService
                     $messages[] = $message;
                 }
             } else {
-                $message= $this->setCategoryData($category, $categoryItem);
+                $message = $this->setCategoryData($category, $categoryItem);
                 if (empty($message)) {
                     $this->entityManager->flush();
                 } else {
@@ -90,7 +77,8 @@ class CategoryService
      */
     private function setCategoryData($category, $categoryItem): string
     {
-        $message = $this->validateLength($categoryItem["title"])->__toString();
+        $constraintsLengthRule = $this->getConstraintsLengthRule();
+        $message = $this->validator->validate($categoryItem["title"], $constraintsLengthRule)->__toString();
         if (empty($message)) {
             $category->setTitle($categoryItem['title']);
             if (!empty($categoryItem["eId"])) {
@@ -102,12 +90,18 @@ class CategoryService
     }
 
     /**
-     * @param $value
-     * @return ConstraintViolationListInterface
+     * @return Assert\Length
      */
-    private function validateLength($value): ConstraintViolationListInterface
+    private function getConstraintsLengthRule(): Assert\Length
     {
-        return $this->validator->validate($value, $this->constraintsLengthRule);
+        return new Assert\Length(
+            [
+                'min' => 3,
+                'max' => 12,
+                'minMessage' => 'Category title must be at least {{ limit }} characters long',
+                'maxMessage' => 'Category title cannot be longer than {{ limit }} characters long',
+            ]
+        );
     }
 
 }

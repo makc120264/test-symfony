@@ -77,7 +77,16 @@ class UpdateProductCommand extends Command
 
         try {
             if ($result === Command::SUCCESS) {
-                $this->productService->checkProducts();
+                $resultCheck = $this->productService->checkProducts();
+                foreach ($resultCheck as $value) {
+                    if (!empty($value)) {
+                        $output->writeln([
+                            'Warning:',
+                            $value
+                        ]);
+                    }
+                }
+
                 $output->writeln([
                     'Products check is completed',
                     '============'
