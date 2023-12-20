@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+
+<title>Edit Demand</title>
+
+{% block body %}
+    <h1>Edit Demand</h1>
+
+    {{ include('demand/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_demand_index') }}">back to list</a>
+
+    {{ include('demand/_delete_form.html.twig') }}
+{% endblock %}

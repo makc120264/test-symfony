@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+<title>New Demand</title>
+
+{% block body %}
+    <h1>Create new Demand</h1>
+
+    {{ include('demand/_form.html.twig') }}
+
+    <a href="{{ path('app_demand_index') }}">back to list</a>
+{% endblock %}
