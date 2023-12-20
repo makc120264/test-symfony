@@ -3,3 +3,22 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+app_product_index:
+    path: /product/
+    controller: App\Controller\ProductController::index
+
+app_product_new:
+    path: /product/new/
+    controller: App\Controller\ProductController::new
+
+app_product_show:
+    path: /product/{id}
+    controller: App\Controller\ProductController::show
+
+app_product_edit:
+    path: /product/{id}/edit
+    controller: App\Controller\ProductController::edit
+
+app_product_delete:
+    path: /product/{id}/delete
+    controller: App\Controller\ProductController::delete
