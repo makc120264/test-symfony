@@ -43,7 +43,7 @@ class Product
      */
     #[ORM\Column]
     #[Range(
-        notInRangeMessage: 'You must be between {{ min }}cm and {{ max }}cm tall to enter',
+        notInRangeMessage: 'Price must be between {{ min }} and {{ max }} tall to enter',
         min: 0,
         max: 200
     )]

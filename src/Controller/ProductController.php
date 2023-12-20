@@ -15,6 +15,18 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/product')]
 class ProductController extends AbstractController
 {
+    /**
+     * @var ProductService
+     */
+    private ProductService $productService;
+
+    /**
+     * @param ProductService $productService
+     */
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
     #[Route('/', name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
     {
@@ -31,8 +43,7 @@ class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $productService = new ProductService();
-            $productService->addNewProduct($product);
+            $this->productService->addNewProduct($product);
 
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -75,8 +86,7 @@ class ProductController extends AbstractController
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($product);
-            $entityManager->flush();
+            $this->productService->removeProduct($product);
         }
 
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
