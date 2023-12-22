@@ -13,10 +13,7 @@ class DemandType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('content')
-            ->add('status')
-            ->add('created_at')
-        ;
+            ->add('content');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

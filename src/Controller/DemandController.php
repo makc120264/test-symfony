@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Demand;
 use App\Form\DemandType;
 use App\Repository\DemandRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,9 @@ class DemandController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $demand->setStatus(Demand::AVAILABLE_STATUSES['new']);
+            $demand->setCreatedAt(new DateTimeImmutable());
+
             $entityManager->persist($demand);
             $entityManager->flush();
 
@@ -68,7 +72,7 @@ class DemandController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_demand_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_demand_delete', methods: ['POST'])]
     public function delete(Request $request, Demand $demand, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$demand->getId(), $request->request->get('_token'))) {

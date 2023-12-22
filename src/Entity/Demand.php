@@ -9,6 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DemandRepository::class)]
 class Demand
 {
+    const AVAILABLE_STATUSES = [
+        'new' => 'New',
+        'in_progress' => 'In progress',
+        'completed' => 'Completed',
+        'canceled' => 'Canceled'
+    ];
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

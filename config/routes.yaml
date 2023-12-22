@@ -3,6 +3,26 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+app_demand_index:
+    path: /demand/
+    controller: App\Controller\DemandController::index
+
+app_demand_new:
+    path: /demand/new/
+    controller: App\Controller\DemandController::new
+
+app_demand_show:
+    path: /demand/{id}
+    controller: App\Controller\DemandController::show
+
+app_demand_edit:
+    path: /demand/{id}/edit
+    controller: App\Controller\DemandController::edit
+
+app_demand_delete:
+    path: /demand/{id}/delete
+    controller: App\Controller\DemandController::delete
+
 app_product_index:
     path: /product/
     controller: App\Controller\ProductController::index
