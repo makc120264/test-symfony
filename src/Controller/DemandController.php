@@ -6,6 +6,7 @@ use App\Entity\Demand;
 use App\Form\DemandType;
 use App\Repository\DemandRepository;
 use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,9 @@ class DemandController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/new', name: 'app_demand_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -32,7 +36,10 @@ class DemandController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $demand->setStatus(Demand::AVAILABLE_STATUSES['new']);
-            $demand->setCreatedAt(new DateTimeImmutable());
+
+            $tz = new DateTimeZone('UTC');
+            $dateTimeImmutable = new DateTimeImmutable(date('Y-m-d H:i:s'), $tz);
+            $demand->setCreatedAt($dateTimeImmutable);
 
             $entityManager->persist($demand);
             $entityManager->flush();

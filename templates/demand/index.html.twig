@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 
 <title>Demand index</title>
+<head>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+    {% endblock %}
+
+    {% block javascripts %}
+{#        {{ importmap() }}#}
+        <script async src="/assets/app.js"></script>
+    {% endblock %}
+</head>
 
 {% block body %}
     <h1>Demand index</h1>
 
     <table class="table">
         <thead>
-            <tr>
-                <th>Created</th>
-                <th>Status</th>
-                <th>Title</th>
-                <th></th>
-                <th></th>
-                <th>actions</th>
-            </tr>
+        <tr>
+            <th>Created</th>
+            <th>Status</th>
+            <th>Title</th>
+            <th></th>
+            <th></th>
+            <th>actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for demand in demands %}
-            <tr>
-                <td>{{ demand.createdAt ? demand.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            <tr id="request-{{ demand.id }}">
+                <td class="createdAt">{{ demand.createdAt ? demand.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ demand.status }}</td>
                 <td>{{ demand.title }}</td>
                 <td></td>
